@@ -29,13 +29,81 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class CardModel {
+  final String frontImage;
+  bool isFaceUp;
 
-  void _incrementCounter() {
+  CardModel({required this.frontImage, this.isFaceUp = false});
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  List<CardModel> _cards = [];
+  int _matchesFound = 0;
+  int? _firstCardIndex;
+  int? _secondCardIndex;
+  final String backImage = 'assets/back.png';
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeGame();
+  }
+
+  void _initializeGame() {
+    List<String> images = [
+      'assets/Rafael.jpg',
+      'assets/Palmer.jpg',
+      'assets/Jude.jpg',
+      'assets/Lamine.png',
+      'assets/Neymar.jpg',
+      'assets/Mbappe.jpg',
+      'assets/Ronaldo.jpg',
+      'assets/Messi.jpg',
+      'assets/Rafael.jpg',
+      'assets/Palmer.jpg',
+      'assets/Jude.jpg',
+      'assets/Lamine.png',
+      'assets/Neymar.jpg',
+      'assets/Mbappe.jpg',
+      'assets/Ronaldo.jpg',
+      'assets/Messi.jpg',
+    ];
+    images.shuffle();
+    _cards = images.map((image) => CardModel(frontImage: image)).toList();
+    _matchesFound = 0;
+    _firstCardIndex = null;
+    _secondCardIndex = null;
+  }
+
+  void _flipCard(int index) {
     setState(() {
-      _counter++;
+      if (_firstCardIndex == null) {
+        _firstCardIndex = index;
+        _cards[index].isFaceUp = true;
+      } else if (_secondCardIndex == null) {
+        _secondCardIndex = index;
+        _cards[index].isFaceUp = true;
+        _checkForMatch();
+      }
     });
+  }
+
+  void _checkForMatch() {
+    if (_firstCardIndex != null && _secondCardIndex != null) {
+      if (_cards[_firstCardIndex!].frontImage ==
+          _cards[_secondCardIndex!].frontImage) {
+        _matchesFound += 1;
+        _resetSelection();
+      } else {
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {
+            _cards[_firstCardIndex!].isFaceUp = false;
+            _cards[_secondCardIndex!].isFaceUp = false;
+            _resetSelection();
+          });
+        });
+      }
+    }
   }
 
   @override
