@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                 ),
-          itemCount: _cards.length,
+                itemCount: _cards.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
@@ -144,10 +144,40 @@ class _MyHomePageState extends State<MyHomePage> {
                         _flipCard(index); // Flip the card when tapped
                       }
                     },
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        );
+                      },
+                      child: _cards[index].isFaceUp
+                          ? Image.asset(
+                              _cards[index].frontImage,
+                              key: ValueKey(_cards[index].frontImage),
+                            )
+                          : Image.asset(
+                              backImage,
+                              key: ValueKey(backImage),
+                            ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: () {
+          setState(() {
+            _initializeGame(); // Restart the game when pressed
+          });
+        },
+        tooltip: 'Restart',
+        child: const Icon(Icons.refresh),
       ),
     );
   }
