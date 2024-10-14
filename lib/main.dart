@@ -106,6 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _resetSelection() {
+    _firstCardIndex = null;
+    _secondCardIndex = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,14 +122,28 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+            const Text(
+              'Matches found:',
+            ),
             Text(
-              '$_counter',
+              '$_matchesFound',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-          ],
-        ),
-      ),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                ),
+          itemCount: _cards.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (!_cards[index].isFaceUp &&
+                          _firstCardIndex != index &&
+                          _secondCardIndex != index) {
+                        _flipCard(index); // Flip the card when tapped
+                      }
+                    },
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
